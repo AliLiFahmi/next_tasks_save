@@ -8,7 +8,6 @@ import {
   Clock,
   Trash2,
   Eye,
-  Users,
   BookOpen,
   Hourglass,
 } from "lucide-react";
@@ -82,6 +81,7 @@ export const taskColumns = (onRefresh: () => void): ColumnDef<z.infer<typeof Tas
       </div>
     ),
     enableSorting: true,
+    meta: { displayName: "Judul" }, // Custom display name for dropdown
   },
   {
     accessorKey: "course_name",
@@ -101,6 +101,7 @@ export const taskColumns = (onRefresh: () => void): ColumnDef<z.infer<typeof Tas
       const nameB = rowB.original.course_name || "";
       return nameA.localeCompare(nameB);
     },
+    meta: { displayName: "Mata Kuliah" }, // Custom display name for dropdown
   },
   {
     accessorKey: "description",
@@ -110,6 +111,7 @@ export const taskColumns = (onRefresh: () => void): ColumnDef<z.infer<typeof Tas
       return <div className="max-w-[200px] truncate text-sm">{description}</div>;
     },
     enableSorting: false,
+    meta: { displayName: "Deskripsi" }, // Custom display name for dropdown
   },
   {
     accessorKey: "deadline",
@@ -132,24 +134,20 @@ export const taskColumns = (onRefresh: () => void): ColumnDef<z.infer<typeof Tas
       );
     },
     enableSorting: true,
+    meta: { displayName: "Deadline" }, // Custom display name for dropdown
   },
   {
     accessorKey: "status",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Status" />,
     cell: ({ row }) => {
       const status = row.original.status || "pending";
-      const variantMap = {
-        pending: "outline" as const,
-        "in-progress": "secondary" as const,
-        done: "default" as const,
-      };
       const iconMap = {
         pending: <Hourglass className="mr-1 h-3 w-3 text-yellow-500" />,
         "in-progress": <Loader className="mr-1 h-3 w-3 animate-spin text-blue-500" />,
         done: <CircleCheck className="stroke-border mr-1 h-3 w-3 fill-green-500 dark:fill-green-400" />,
       };
       return (
-        <Badge variant={variantMap[status as keyof typeof variantMap] || "outline"} className="text-muted-foreground">
+        <Badge variant={"outline"} className="text-muted-foreground">
           {iconMap[status as keyof typeof iconMap]}
           {status.charAt(0).toUpperCase() + status.slice(1)}
         </Badge>
@@ -159,6 +157,7 @@ export const taskColumns = (onRefresh: () => void): ColumnDef<z.infer<typeof Tas
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id) || "pending");
     },
+    meta: { displayName: "Status" }, // Custom display name for dropdown
   },
   {
     accessorKey: "created_at",
@@ -172,6 +171,7 @@ export const taskColumns = (onRefresh: () => void): ColumnDef<z.infer<typeof Tas
       return <div className="text-muted-foreground text-sm">{date}</div>;
     },
     enableSorting: true,
+    meta: { displayName: "Ditambahkan" }, // Custom display name for dropdown
   },
   {
     id: "actions",
@@ -188,7 +188,7 @@ export const taskColumns = (onRefresh: () => void): ColumnDef<z.infer<typeof Tas
           await deleteTask(task.id);
           toast.success("Tugas berhasil dihapus");
           router.refresh();
-          onRefresh(); // Call onRefresh after deletion
+          onRefresh();
         } catch (err) {
           toast.error(err instanceof Error ? err.message : "Gagal menghapus tugas");
         }
@@ -248,7 +248,7 @@ export const taskColumns = (onRefresh: () => void): ColumnDef<z.infer<typeof Tas
             task={task}
             open={isEditDrawerOpen}
             onOpenChange={setIsEditDrawerOpen}
-            onRefresh={onRefresh} // Pass onRefresh to TaskEditDrawer
+            onRefresh={onRefresh}
           />
           <TaskDetailDrawer
             task={task}
@@ -260,5 +260,6 @@ export const taskColumns = (onRefresh: () => void): ColumnDef<z.infer<typeof Tas
       );
     },
     enableSorting: false,
+    enableHiding: false,
   },
 ];

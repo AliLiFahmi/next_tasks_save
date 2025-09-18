@@ -1,4 +1,3 @@
-// columns.course.tsx
 import { ColumnDef } from "@tanstack/react-table";
 import { EllipsisVertical, Calendar, Clock, Users, Edit, List, Trash2, Eye } from "lucide-react";
 import { toast } from "sonner";
@@ -58,7 +57,7 @@ export const courseColumns = (onRefresh: () => void): ColumnDef<z.infer<typeof C
       </div>
     ),
     enableSorting: false,
-    enableHiding: false,
+    enableHiding: false, // Not hideable
   },
   {
     accessorKey: "name",
@@ -71,6 +70,7 @@ export const courseColumns = (onRefresh: () => void): ColumnDef<z.infer<typeof C
       );
     },
     enableSorting: true,
+    meta: { displayName: "Mata Kuliah" }, // Custom display name for dropdown
   },
   {
     accessorKey: "lecturer",
@@ -80,6 +80,7 @@ export const courseColumns = (onRefresh: () => void): ColumnDef<z.infer<typeof C
       return <div className="text-sm font-medium">{lecturer}</div>;
     },
     enableSorting: true,
+    meta: { displayName: "Dosen" }, // Custom display name for dropdown
   },
   {
     accessorKey: "semester",
@@ -94,6 +95,7 @@ export const courseColumns = (onRefresh: () => void): ColumnDef<z.infer<typeof C
       );
     },
     enableSorting: true,
+    meta: { displayName: "Semester" }, // Custom display name for dropdown
   },
   {
     accessorKey: "sks",
@@ -108,6 +110,7 @@ export const courseColumns = (onRefresh: () => void): ColumnDef<z.infer<typeof C
       );
     },
     enableSorting: true,
+    meta: { displayName: "SKS" }, // Custom display name for dropdown
   },
   {
     accessorKey: "category",
@@ -133,6 +136,7 @@ export const courseColumns = (onRefresh: () => void): ColumnDef<z.infer<typeof C
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
     },
+    meta: { displayName: "Kategori" }, // Custom display name for dropdown
   },
   {
     accessorKey: "description",
@@ -142,6 +146,7 @@ export const courseColumns = (onRefresh: () => void): ColumnDef<z.infer<typeof C
       return <div className="max-w-[200px] truncate text-sm">{description}</div>;
     },
     enableSorting: false,
+    meta: { displayName: "Deskripsi" }, // Custom display name for dropdown
   },
   {
     accessorKey: "created_at",
@@ -155,6 +160,7 @@ export const courseColumns = (onRefresh: () => void): ColumnDef<z.infer<typeof C
       return <div className="text-muted-foreground text-sm">{date}</div>;
     },
     enableSorting: true,
+    meta: { displayName: "Ditambahkan" }, // Custom display name for dropdown
   },
   {
     id: "actions",
@@ -171,7 +177,7 @@ export const courseColumns = (onRefresh: () => void): ColumnDef<z.infer<typeof C
           await deleteCourse(course.id);
           toast.success("Mata kuliah berhasil dihapus");
           router.refresh();
-          onRefresh(); // Call onRefresh after deletion
+          onRefresh();
         } catch (err) {
           toast.error(err instanceof Error ? err.message : "Gagal menghapus mata kuliah");
         }
@@ -237,12 +243,13 @@ export const courseColumns = (onRefresh: () => void): ColumnDef<z.infer<typeof C
             course={course}
             open={isEditDrawerOpen}
             onOpenChange={setIsEditDrawerOpen}
-            onRefresh={onRefresh} // Pass onRefresh to CourseEditDrawer
+            onRefresh={onRefresh}
           />
           <CourseDetailDrawer course={course} open={isDetailDrawerOpen} onOpenChange={setIsDetailDrawerOpen} />
         </>
       );
     },
     enableSorting: false,
+    enableHiding: false,
   },
 ];
