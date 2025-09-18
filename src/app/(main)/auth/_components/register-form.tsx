@@ -4,6 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { register } from "@/lib/db";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
@@ -13,7 +15,9 @@ const FormSchema = z
   .object({
     email: z.string().email({ message: "Please enter a valid email address." }),
     password: z.string().min(6, { message: "Password must be at least 6 characters." }),
-    confirmPassword: z.string().min(6, { message: "Confirm Password must be at least 6 characters." }),
+    confirmPassword: z.string().min(6, {
+      message: "Confirm Password must be at least 6 characters.",
+    }),
   })
   .refine((data) => data.password === data.confirmPassword, {
     message: "Passwords do not match.",
@@ -21,6 +25,8 @@ const FormSchema = z
   });
 
 export function RegisterForm() {
+  const router = useRouter();
+
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
     defaultValues: {
@@ -31,13 +37,27 @@ export function RegisterForm() {
   });
 
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-    toast("You submitted the following values", {
-      description: (
-        <pre className="mt-2 w-[320px] rounded-md bg-neutral-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
+    try {
+      const res = await register(data.email, data.password);
+
+      if (res.session) {
+        // auto login berhasil
+        toast.success("Registrasi & login berhasil 🎉", {
+          description: `Selamat datang, ${res.user?.email}`,
+        });
+        router.push("/dashboard/default");
+      } else {
+        // kalau email confirmation masih ON
+        toast("Registrasi berhasil ✅", {
+          description: "Silakan cek email untuk verifikasi sebelum login.",
+        });
+        router.push("/login");
+      }
+    } catch (err: any) {
+      toast.error("Registrasi gagal ❌", {
+        description: err.message,
+      });
+    }
   };
 
   return (

@@ -3,9 +3,8 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
-import { PlusCircleIcon, MailIcon, ChevronRight } from "lucide-react";
+import { PlusCircleIcon, ChevronRight, SquarePenIcon } from "lucide-react";
 
-import { Button } from "@/components/ui/button";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import {
   DropdownMenu,
@@ -53,6 +52,11 @@ const NavItemExpanded = ({
               disabled={item.comingSoon}
               isActive={isActive(item.url, item.subItems)}
               tooltip={item.title}
+              className={
+                isActive(item.url)
+                  ? "bg-primary text-primary-foreground font-semibold shadow-sm"
+                  : "hover:bg-muted hover:text-foreground"
+              }
             >
               {item.icon && <item.icon />}
               <span>{item.title}</span>
@@ -65,6 +69,11 @@ const NavItemExpanded = ({
               aria-disabled={item.comingSoon}
               isActive={isActive(item.url)}
               tooltip={item.title}
+              className={
+                isActive(item.url)
+                  ? "bg-primary text-primary-foreground font-semibold shadow-sm"
+                  : "hover:bg-muted hover:text-foreground"
+              }
             >
               <Link href={item.url} target={item.newTab ? "_blank" : undefined}>
                 {item.icon && <item.icon />}
@@ -111,6 +120,11 @@ const NavItemCollapsed = ({
             disabled={item.comingSoon}
             tooltip={item.title}
             isActive={isActive(item.url, item.subItems)}
+            className={
+              isActive(item.url)
+                ? "bg-primary text-primary-foreground font-semibold shadow-sm"
+                : "hover:bg-muted hover:text-foreground"
+            }
           >
             {item.icon && <item.icon />}
             <span>{item.title}</span>
@@ -145,7 +159,7 @@ export function NavMain({ items }: NavMainProps) {
   const path = usePathname();
   const { state, isMobile } = useSidebar();
 
-  const isItemActive = (url: string, subItems?: NavMainItem["subItems"]) => {
+  const isActive = (url: string, subItems?: NavMainItem["subItems"]) => {
     if (subItems?.length) {
       return subItems.some((sub) => path.startsWith(sub.url));
     }
@@ -158,29 +172,6 @@ export function NavMain({ items }: NavMainProps) {
 
   return (
     <>
-      <SidebarGroup>
-        <SidebarGroupContent className="flex flex-col gap-2">
-          <SidebarMenu>
-            <SidebarMenuItem className="flex items-center gap-2">
-              <SidebarMenuButton
-                tooltip="Quick Create"
-                className="bg-primary text-primary-foreground hover:bg-primary/90 hover:text-primary-foreground active:bg-primary/90 active:text-primary-foreground min-w-8 duration-200 ease-linear"
-              >
-                <PlusCircleIcon />
-                <span>Quick Create</span>
-              </SidebarMenuButton>
-              <Button
-                size="icon"
-                className="h-9 w-9 shrink-0 group-data-[collapsible=icon]:opacity-0"
-                variant="outline"
-              >
-                <MailIcon />
-                <span className="sr-only">Inbox</span>
-              </Button>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarGroupContent>
-      </SidebarGroup>
       {items.map((group) => (
         <SidebarGroup key={group.id}>
           {group.label && <SidebarGroupLabel>{group.label}</SidebarGroupLabel>}
@@ -196,7 +187,12 @@ export function NavMain({ items }: NavMainProps) {
                           asChild
                           aria-disabled={item.comingSoon}
                           tooltip={item.title}
-                          isActive={isItemActive(item.url)}
+                          isActive={isActive(item.url)}
+                          className={
+                            isActive(item.url)
+                              ? "bg-primary text-primary-foreground font-semibold shadow-sm"
+                              : "hover:bg-muted hover:text-foreground"
+                          }
                         >
                           <Link href={item.url} target={item.newTab ? "_blank" : undefined}>
                             {item.icon && <item.icon />}
@@ -207,11 +203,11 @@ export function NavMain({ items }: NavMainProps) {
                     );
                   }
                   // Otherwise, render the dropdown as before
-                  return <NavItemCollapsed key={item.title} item={item} isActive={isItemActive} />;
+                  return <NavItemCollapsed key={item.title} item={item} isActive={isActive} />;
                 }
                 // Expanded view
                 return (
-                  <NavItemExpanded key={item.title} item={item} isActive={isItemActive} isSubmenuOpen={isSubmenuOpen} />
+                  <NavItemExpanded key={item.title} item={item} isActive={isActive} isSubmenuOpen={isSubmenuOpen} />
                 );
               })}
             </SidebarMenu>

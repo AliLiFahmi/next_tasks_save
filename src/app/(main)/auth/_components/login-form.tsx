@@ -4,6 +4,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { z } from "zod";
+import { login } from "@/lib/db";
+import { useRouter } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Checkbox } from "@/components/ui/checkbox";
@@ -26,14 +28,22 @@ export function LoginForm() {
     },
   });
 
+  const router = useRouter();
+
   const onSubmit = async (data: z.infer<typeof FormSchema>) => {
-    toast("You submitted the following values", {
-      description: (
-        <pre className="mt-2 w-[320px] rounded-md bg-neutral-950 p-4">
-          <code className="text-white">{JSON.stringify(data, null, 2)}</code>
-        </pre>
-      ),
-    });
+    try {
+      const res = await login(data.email, data.password);
+
+      toast.success("Login berhasil 🎉", {
+        description: `Selamat datang kembali, ${res.user?.email ?? "User"}`,
+      });
+
+      router.push("/dashboard/default");
+    } catch (err: any) {
+      toast.error("Login gagal ❌", {
+        description: err.message,
+      });
+    }
   };
 
   return (

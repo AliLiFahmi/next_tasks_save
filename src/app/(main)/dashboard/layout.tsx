@@ -58,7 +58,7 @@ export default async function Layout({ children }: Readonly<{ children: ReactNod
               <SearchDialog />
             </div>
             <div className="flex items-center gap-2">
-              <LayoutControls {...layoutPreferences} />
+              {/* <LayoutControls {...layoutPreferences} /> */}
               <ThemeSwitcher />
               <AccountSwitcher users={users} />
             </div>
