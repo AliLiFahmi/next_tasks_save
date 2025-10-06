@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Next.js Admin Template with TypeScript & Shadcn UI
 
 Includes multiple dashboards, authentication layouts, customizable theme presets, and more.
@@ -118,3 +119,7 @@ Feel free to open issues, feature requests, or start a discussion if you'd like 
 
 
 **Happy Vibe Coding!**
+=======
+# next_tasks_save
+Pencatatan Tugas Kuliah
+>>>>>>> 298b4617a6c4e10d7c244c8362baff32bb84898c
